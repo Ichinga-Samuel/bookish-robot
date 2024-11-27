@@ -8,7 +8,7 @@ async def main():
     async with Account():
         # symbol object must be created with a name
         sym = Symbol(name="BTCUSD")
-        print(sym, 'name is the only available property')
+        print(sym.dict, 'name is the only available property')
 
 
         # initialize the symbol to get properties
@@ -16,6 +16,8 @@ async def main():
         # all the properties are now available
         print(sym.dict)
 
+        # add symbol to the market watch
+        res = await sym.book_add()
 
         # get the last 1000 rates.
         # data is returned as a Candles object
@@ -39,5 +41,13 @@ async def main():
         ask, bid = tick.ask, tick.bid
         print(ask, bid)
 
+        # a non usd pair
+        # conversion from one currency to another
+        sym2 = Symbol(name="EURJPY")
+        await sym2.initialize()
+        amount = await sym2.convert_currency(from_currency="JPY", to_currency="USD", amount=1000)
+        print(f"equivalent amount in usd is {amount}")
+        amount2 = await sym2.amount_in_quote_currency(amount=amount)
+        print(f"equivalent amount in quote currency is {amount2}")
 
 asyncio.run(main())
